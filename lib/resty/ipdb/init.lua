@@ -34,7 +34,7 @@ local ipv4_pattern  = [[(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2
 local function get_ipipfree_ipdb()
 
     local info = debug.getinfo(1, "S")
-    local path = _sub(info.source, 2, -8)
+    local path = _sub(info.source, 2, -9)
 
     return path .. "ipipfree.ipdb"
 
