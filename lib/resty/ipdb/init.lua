@@ -27,6 +27,20 @@ local DATABASE_ERR         = "database error"
 
 local ipv4_pattern  = [[(((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}((\d{1,2})|(1\d{2})|(2[0-4]\d)|(25[0-5]))]]
 
+-- 试用版IP地址数据库下载
+-- https://www.ipip.net/download.html
+
+-- 使用同目录下的 ipipfree.ipdb
+local function get_ipipfree_ipdb()
+
+    local info = debug.getinfo(1, "S")
+    local path = _sub(info.source, 2, -8)
+
+    return path .. "ipipfree.ipdb"
+
+end
+
+
 local function _uint16(a, b)
     if not a or not b then
         return nil
@@ -93,7 +107,6 @@ local function parse_data(data)
     if not meta_length then return nil, INVALID_DB_FORMAT end
 
     local text = _sub(data, 5, 5+meta_length)
-    ngx.say(text)
 
     local obj = cjson.decode(text)
     if type(obj) ~= "table" then return nil, INVALID_DB_FORMAT end
@@ -147,7 +160,10 @@ _T.DBInfo = { "//数据库定义",
 -- 加载指定路径的数据库文件并创建实例
 function _M.new(filepath)
 -- @@ 这是构造函数
--- @filepath    : 数据库文件路径
+-- @filepath    : string    //数据库文件路径
+
+    -- 默认使用同目录下的 ipipfree.ipdb
+    filepath = filepath or get_ipipfree_ipdb()
 
     local  data, err = read_date(filepath)
     if not data then return nil, err end
